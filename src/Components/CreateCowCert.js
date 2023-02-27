@@ -108,7 +108,8 @@ class CreateCowCert extends Component {
     const Sdata = getdata.split(":");
     // console.log(Sdata[1].toLocaleLowerCase())
     this.setState({
-      account_Employee: Sdata[1].toLocaleLowerCase(),
+      // account_Employee: Sdata[1].toLocaleLowerCase(),
+      account_Employee: Sdata[1],
     });
   }
   handleError(err) {

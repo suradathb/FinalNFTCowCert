@@ -1,7 +1,7 @@
 import Footer from "./Components/Footer";
 import Header from "./Components/Header";
 // import newcowdams from "./data/NewCowDam";
-import NewCowcert from "./Components/NewCowcert";
+// import NewCowcert from "./Components/NewCowcert";
 import Banner from "./Components/Banner";
 import { Route, Switch } from "react-router-dom";
 import Abount from "./Abount";
@@ -18,12 +18,13 @@ import React, { Component } from "react";
 import Home from "./Home";
 import ShowCowCert from "./Components/ShowCowCert";
 import BlockCowCert from "./Components/BlockCowCert";
-import axios from "axios";
+// import axios from "axios";
 // import CreateMember from "./Components/CreateMember";
 import AddOwner from "./AddMember";
-import Example from "./Components/ReportCert";
+// import Example from "./Components/ReportCert";
 import Member from "./Member";
 import ShowItemCowCert from "./Components/ShowItemCowCert";
+import UploadImg from "./UploadImg";
 
 
 
@@ -167,6 +168,9 @@ class App extends Component {
           </Route>
           <Route path="/ReportCert">
               <ReportCert/>
+          </Route>
+          <Route path="/upload">
+            <UploadImg/>
           </Route>
           {/* <Route path="/showcowcert">
             <ShowCowCert />

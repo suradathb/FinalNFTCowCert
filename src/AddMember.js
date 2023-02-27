@@ -2,59 +2,29 @@ import Web3 from "web3";
 import CowCoin from "./abis/CowCoin.json";
 import { Link } from "react-router-dom";
 import React, { Component } from "react";
-import { useForm } from "react-hook-form";
-import { CustomDialog, useDialog } from "react-st-modal";
+import web3Service from "./web3.server";
 import QrReader from "react-qr-reader";
 import {
-  Container,
-  Card,
-  CardContent,
-  makeStyles,
-  Grid,
-  TextField,
   Button,
 } from "@material-ui/core";
 
 class AddMember extends Component {
   async componentWillMount() {
-    await this.loadWeb3();
-    await this.loadBlockchainData();
-  }
-  async loadWeb3() {
-    if (window.ethereum) {
-      window.web3 = new Web3(window.ethereum);
-      await window.ethereum.enable();
-    } else if (window.web3) {
-      window.web3 = new Web3(window.web3.currentProvider);
-    } else {
-      // window.alert(
-      //   "Non-Ethereum browser detected. You should consider trying MetaMask!"
-      // );
+    await web3Service.loadWeb3();
+    await web3Service.loadBlockchainData();
+    const taskCount = await web3Service.state.CowCoin.methods.goverCount().call();
+    for (var i = 0; i <= taskCount; i++) {
+      const task = await web3Service.state.CowCoin.methods.taskcows(i).call();
+      // console.log(task.government, task.username);
+      this.setState({
+        tasks: [...this.state.tasks, task],
+      });
     }
-  }
-  async loadBlockchainData() {
-    if (window.web3) {
-      const web3 = window.web3;
-      // Load account
-      const accounts = await web3.eth.getAccounts();
-      this.setState({ account: accounts[0] });
-      const networkId = await web3.eth.net.getId();
-      const networkData = CowCoin.networks[networkId];
-      const abi = CowCoin.abi;
-      const address = networkData.address;
-      const cowCoin = new web3.eth.Contract(abi, address);
-      this.setState({ cowCoin });
-      const taskCount = await cowCoin.methods.goverCount().call();
-      this.setState({ taskCount });
-      // console.log(cowCoin.methods.goverCount().call())
-      for (var i = 0; i <= taskCount; i++) {
-        const task = await cowCoin.methods.taskcows(i).call();
-        // console.log(task.government, task.username);
-        this.setState({
-          tasks: [...this.state.tasks, task],
-        });
-      }
-    }
+    this.setState({
+      account:web3Service.state.account,
+      cowCoin:web3Service.state.cowCoin,
+      taskCount:taskCount
+    });
   }
   constructor(props) {
     super(props);

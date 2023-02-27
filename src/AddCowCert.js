@@ -1,14 +1,9 @@
 import React, { Component } from "react";
 import Web3 from "web3";
 import CreateCowCert from "./Components/CreateCowCert";
-// import CowCertificate from "./abis/CowCertificate.json";
-import multer from "multer";
-import axios from "axios";
 import CowCoin from "./abis/CowCoin.json";
 import ipfs from './ipfs';
-import ShowCowCert from "./Components/ShowCowCert";
-
-
+import ipfsApi from 'ipfs-api';
 
 class AddCowCert extends Component {
   async componentWillMount() {
@@ -61,25 +56,26 @@ class AddCowCert extends Component {
     };
     this.createTask = this.createTask.bind(this);
     this.toggleCompleted = this.toggleCompleted.bind(this);
+    this.ipfs = ipfsApi('localhost', '5001');
   }
   createTask(content) {
-    // console.log(content)
+    // console.log(content.buffer)
     const CowCoinNo = content.cowcert_no;
     const account = content.account_Employee;
     const objectArray = Object.values(content);
-    ipfs.files.add(content.buffer, (error, result) => {
-      if(error) {
-        console.error(error)
+    // ipfs.files.add(content.buffer, (error, result) => {
+    this.ipfs.add(content.buffer, (err, result) => {
+      if(err) {
+        console.error(err)
         return
       }
+      // console.log(result[0].hash);
       const addCert = this.state.cowCoin.methods
       .tokenizedCowCert(account,CowCoinNo,`${objectArray}`,result[0].hash)
       .send({ from: this.state.account })
       .once("receipt", (receipt) => {
         this.setState({ ipfsHash: result[0].hash });
         this.setState({ loading: false });
-        // console.log('ifpsHash', this.state.ipfsHash)
-        // return <ShowCowCert/>
         window.location.reload();
       });
     })
@@ -93,7 +89,7 @@ class AddCowCert extends Component {
         this.setState({ loading: false });
       });
   }
-  
+
   render() {
     return (
       <>

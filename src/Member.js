@@ -12,6 +12,10 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";
+import ShowMember from "./ShowMember";
+import MemberTranfer from "./MemberTranfer";
+import MemberBlock from "./MemberBlock";
+import MemberHis from "./MemberHis";
 // import ShowItemCowCert from "./Components/ShowItemCowCert";
 
 class Member extends Component {
@@ -50,7 +54,8 @@ class Member extends Component {
       this.setState({ cowerc });
       const coinCow = await cowCoin.methods.cowCertCount().call();
       this.setState({ coinCow });
-      // console.log(cowCoin.methods.blacklistedCowCert(1).call())
+      const conaddress = cowCoin._address;
+      // console.log(accounts)
       for (var i = 1; i <= coinCow; i++) {
         const task = await cowCoin.methods.blacklistedCowCert(i).call();
         const getadd = await cowerc.methods.ownerOf(i).call();
@@ -66,22 +71,26 @@ class Member extends Component {
       axios
         .get(
           // `https://api-testnet.bscscan.com/api?module=account&action=tokennfttx&contractaddress=0x82eaDcf8504F893993cf075b98f11465078B240E&address=${accounts}`
-          `https://api-testnet.bscscan.com/api?module=account&action=tokennfttx&contractaddress=0x73DF02B5a8AB94932343d7259d5002b329050659&address=${accounts}`
+          `https://api-testnet.bscscan.com/api?module=account&action=tokennfttx&contractaddress=${conaddress}&address=${accounts}`
+          // `https://api-testnet.bscscan.com/api?module=account&action=tokennfttx&contractaddress=0x73DF02B5a8AB94932343d7259d5002b329050659`
         )
         .then((response) => {
           const getDataAll = response.data.result.map((cow, key) => {
+            // console.log(cow)
             const getacc = this.state.account.toLocaleLowerCase();
             // console.log(getacc,cow.to)
-            // if (cow.to != getacc) {
-            //   console.log(getacc,cow.to,cow.tokenID)
-            //   this.setState({
-            //     balance: [...this.state.balance, cow.tokenID],
-            //   });
-            // }
-
+            if (cow.to != getacc) {
+              // console.log(getacc,cow.to,cow.tokenID)
+              this.setState({
+                balance: [...this.state.balance, cow.tokenID],
+                hash: [...this.state.hash, cow],
+              });
+            }
+            
             const task = cowCoin.methods.blacklistedCowCert(cow.tokenID).call();
+            
             // const getadd = cowerc.methods.ownerOf(cow.tokenID).call();
-            // // console.log(task)
+            // // // console.log(task)
             // getadd.then((name) =>{
             //   // console.log(name)
             //   // if (cow.to != getacc) {
@@ -106,10 +115,10 @@ class Member extends Component {
 
             //   });
             // });
-            this.setState({
-              hash: [...this.state.hash, cow],
-              // tasks: [...this.state.tasks, task],
-            });
+            // this.setState({
+            //   hash: [...this.state.hash, cow],
+            //   // tasks: [...this.state.tasks, task],
+            // });
           });
         });
     }
@@ -153,7 +162,8 @@ class Member extends Component {
               src="../assets/images/NFTBlack.png"
               alt=""
             />
-            <p class="inputname">{this.state.account.toLocaleLowerCase()}</p>
+            {/* <p class="inputname">{this.state.account.toLocaleLowerCase()}</p> */}
+            <p class="inputname">{this.state.account}</p>
           </div>
         </div>
         <div className="container py-5">
@@ -182,240 +192,26 @@ class Member extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.hash.map((namecontract, keyname) => {
-                        let num;
-                        const depArray = this.state.balance.map((j) => {
-                          // console.log(j)
-                          num = j;
-                          return num;
-                        });
-                        // let getowner = this.state.owner
-                        // console.log(getowner)
-                        const smarts = this.state.tasks;
-                        // console.log(smarts)
-                        if (smarts[keyname] != undefined) {
-                          const histshow = smarts[keyname].cowCertlist;
-                          const afterSp = histshow.split(",");
-                          if (smarts[keyname].id == namecontract.tokenID) {
-                            if (
-                              this.state.owner[keyname].toLocaleLowerCase() ==
-                                this.state.account.toLocaleLowerCase() &&
-                              this.state.status[keyname] == false
-                            ) {
-                              return (
-                                <tr key={keyname}>
-                                  <td>{smarts[keyname].tokendId}</td>
-                                  <td>
-                                    <img
-                                      className="CowCoin"
-                                      src={`https://ipfs.io/ipfs/${smarts[keyname].imgPath}`}
-                                      alt=""
-                                    />
-                                  </td>
-                                  <td>{afterSp[3]}</td>
-                                  <td>
-                                    <Link
-                                      to={`/hiscowcoin/${namecontract.hash}`}
-                                      title={
-                                        smarts[keyname].tokendId +
-                                        "," +
-                                        afterSp[3]
-                                      }
-                                    >
-                                      {namecontract.hash}
-                                    </Link>
-                                  </td>
-                                  <td>
-                                    <ReportCert
-                                      key={smarts[keyname].id}
-                                      hash={namecontract}
-                                      smart={histshow}
-                                      pad={depArray}
-                                      accessKey={smarts[keyname].id}
-                                      account={this.state.account}
-                                      images={smarts[keyname].imgPath}
-                                      ERC721={this.state.cowerc}
-                                      owner_account={this.state.owner[keyname].toLocaleLowerCase()}
-                                    />
-                                  </td>
-                                  <td>
-                                    {/* {console.log(this.state.status[keyname])} */}
-                                    {/* {this.state.owner[
-                                      keyname
-                                    ].toLocaleLowerCase() ==
-                                    this.state.account.toLocaleLowerCase() ? ( */}
-                                    <SearchItem
-                                      key={smarts[keyname].id}
-                                      hash={namecontract}
-                                      smart={histshow}
-                                      pad={depArray}
-                                      accessKey={smarts[keyname].id}
-                                      account={this.state.account}
-                                      images={smarts[keyname].imgPath}
-                                      ERC721={this.state.cowerc}
-                                    />
-                                    {/* ) : (
-                                      ""
-                                    )} */}
-                                  </td>
-                                </tr>
-                              );
-                            }
-                          }
-                        }
-                      })}
+                      <MemberTranfer/>
                     </tbody>
                   </table>
                 </TabPanel>
                 <TabPanel value="2">
-                  {/* <div class="container py-5">
-                    <div class="row py-5"> */}
-                      {this.state.hash.map((namecontract, keyname) => {
-                        let num;
-                        const depArray = this.state.balance.map((j) => {
-                          // console.log(j)
-                          num = j;
-                          return num;
-                        });
-                        // let getowner = this.state.owner
-                        // console.log(getowner)
-                        const smarts = this.state.tasks;
-                        // console.log(smarts)
-                        if (smarts[keyname] != undefined) {
-                          const histshow = smarts[keyname].cowCertlist;
-                          const afterSp = histshow.split(",");
-
-                          if (smarts[keyname].id == namecontract.tokenID) {
-                            if (
-                              this.state.owner[keyname].toLocaleLowerCase() ==
-                                this.state.account.toLocaleLowerCase() &&
-                              this.state.status[keyname] == true
-                            ) {
-                              return (
-                                <div className="col-12 col-md-4 mb-4">
-                                  <div className="card h-100">
-                                    <a href="shop-single.html">
-                                      <img
-                                        src={`https://ipfs.io/ipfs/${smarts[keyname].imgPath}`}
-                                        class="card-img-top"
-                                        alt="..."
-                                      />
-                                    </a>
-                                    <div class="card-body">
-                                      <ul class="list-unstyled d-flex justify-content-between">
-                                        <li>
-                                          {/* <i class="text-warning fa fa-star"></i>
-                                      <i class="text-warning fa fa-star"></i>
-                                      <i class="text-warning fa fa-star"></i>
-                                      <i class="text-muted fa fa-star"></i>
-                                      <i class="text-muted fa fa-star"></i> */}
-                                        </li>
-                                        <li class="text-muted text-right">
-                                          {afterSp[3]}
-                                        </li>
-                                      </ul>
-                                      <a
-                                        href="shop-single.html"
-                                        class="h2 text-decoration-none text-dark"
-                                      >
-                                        {afterSp[3]}
-                                      </a>
-                                      <p class="card-text"></p>
-                                      {(afterSp[3], afterSp[2])}
-                                      {/* <p class="text-muted">Reviews (24)</p> */}
-                                    </div>
-                                  </div>
-                                </div>
-                              );
-                            }
-                          }
-                        }
-                      })}
-                    {/* </div>
-                  </div> */}
+                  <MemberBlock/>
                 </TabPanel>
               </TabContext>
             </Box>
           </div>
         </div>
-
         <div class="container py-5">
           <div class="row py-5">
             <div class="row">
               <p>รายการที่ถูกโอนแล้ว</p>
             </div>
-            {this.state.hash.map((namecontract, keyname) => {
-              let num;
-              const depArray = this.state.balance.map((j) => {
-                // console.log(j)
-                num = j;
-                return num;
-              });
-              // let getowner = this.state.owner
-              // console.log(getowner)
-              const smarts = this.state.tasks;
-              // console.log(smarts)
-              if (smarts[keyname] != undefined) {
-                const histshow = smarts[keyname].cowCertlist;
-                const afterSp = histshow.split(",");
-
-                if (smarts[keyname].id == namecontract.tokenID) {
-                  if (
-                    this.state.owner[keyname].toLocaleLowerCase() !=
-                    this.state.account.toLocaleLowerCase()
-                  ) {
-                    return (
-                      <div className="col-12 col-md-4 mb-4">
-                        <div className="card h-100">
-                        <Link
-                                      to={`/hiscowcoin/${namecontract.hash}`}
-                                      title={
-                                        smarts[keyname].tokendId +
-                                        "," +
-                                        afterSp[3]
-                                      }
-                                    >
-                            <img
-                              src={`https://ipfs.io/ipfs/${smarts[keyname].imgPath}`}
-                              class="card-img-top"
-                              alt="..."
-                            />
-                          
-                          <div class="card-body">
-                            <ul class="list-unstyled d-flex justify-content-between">
-                              <li>
-                                {/* <i class="text-warning fa fa-star"></i>
-                                      <i class="text-warning fa fa-star"></i>
-                                      <i class="text-warning fa fa-star"></i>
-                                      <i class="text-muted fa fa-star"></i>
-                                      <i class="text-muted fa fa-star"></i> */}
-                              </li>
-                              <li class="text-muted text-right">
-                                โอนแล้ว
-                              </li>
-                            </ul>
-                            <a
-                              href="shop-single.html"
-                              class="h2 text-decoration-none text-dark"
-                            >
-                              {afterSp[2]} &nbsp;
-                              {afterSp[3]}
-                            </a>
-                            <p class="card-text">
-                            {`โคบราห์มัน : ${afterSp[0]} สี : ${afterSp[6]} เลขประจำตัว : ${afterSp[5]}`}
-                            </p>
-                            <p class="card-text">{`เจ้าของปัจจุบัน : ${this.state.owner[keyname].toLocaleLowerCase()}`}</p>
-                          </div>
-                          </Link>
-                        </div>
-                      </div>
-                    );
-                  }
-                }
-              }
-            })}
+            <MemberHis/>
           </div>
         </div>
+        {/* <ShowMember/> */}
       </>
     );
   }

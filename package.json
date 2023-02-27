@@ -25,6 +25,7 @@
     "gulp-font": "^1.0.4",
     "ipfs-api": "^26.1.2",
     "ipfs-core": "^0.13.0",
+    "ipfs-http-client": "^60.0.0",
     "jspdf": "^2.5.0",
     "multer": "^1.4.3",
     "pdfmake": "^0.2.4",

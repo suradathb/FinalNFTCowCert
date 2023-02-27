@@ -1,19 +1,13 @@
-import React, { Component, useRef } from "react";
-import { CustomDialog, useDialog } from "react-st-modal";
+import React, { Component } from "react";
+import { CustomDialog } from "react-st-modal";
 import axios from "axios";
 import Web3 from "web3";
 import CowCoin from "../abis/CowCoin.json";
 import ERC721 from "../abis/ERC721.json";
-import QrReader from "react-qr-reader";
+// import QrReader from "react-qr-reader";
 import "./BlockCowCert.css";
 import {
-  Container,
-  Card,
-  CardContent,
   makeStyles,
-  Grid,
-  TextField,
-  Button,
 } from "@material-ui/core";
 
 class BlockCowCert extends Component {
@@ -95,7 +89,7 @@ class BlockCowCert extends Component {
     // const check = this.state.cowCoin.methods.enableTransfer(this.state.datas.ID)
     // event.preventDefault()
     const fromCert = this.state.account;
-    const to = event.toAddress;
+    // const to = event.toAddress;
     const tokend = this.state.datas.ID;
     // console.log(tokend)
     // console.log(fromCert,to,tokend);

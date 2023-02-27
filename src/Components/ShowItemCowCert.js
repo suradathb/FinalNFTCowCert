@@ -41,6 +41,8 @@ class ShowItemCowCert extends Component {
       const cowerc = new web3.eth.Contract(abiERC, address);
       this.setState({ cowCoin });
       this.setState({ cowerc });
+      const conaddress = cowCoin._address;
+      this.setState({contractaddress:conaddress});
       const coinCow = await cowCoin.methods.cowCertCount().call();
       this.setState({ coinCow });
       for (var i = 1; i <= coinCow; i++) {
@@ -70,7 +72,9 @@ class ShowItemCowCert extends Component {
       this.setState({ cowerc });
       const coinCow = await cowCoin.methods.cowCertCount().call();
       this.setState({ coinCow });
-      // console.log(cowerc)
+      const conaddress = cowCoin._address;
+      this.setState({contractaddress:conaddress});
+      console.log(conaddress)
       for (var i = 1; i <= coinCow; i++) {
         const task = await cowCoin.methods.blacklistedCowCert(i).call();
         const shwaddress = await cowerc.methods.ownerOf(i).call();
@@ -86,7 +90,8 @@ class ShowItemCowCert extends Component {
     axios
       .get(
         // "https://api-testnet.bscscan.com/api?module=account&action=txlist&address=0x82eaDcf8504F893993cf075b98f11465078B240E&startblock=1&endblock=99999999&sort=asc&apikey=YourApiKeyToken"
-        "https://api-testnet.bscscan.com/api?module=account&action=tokennfttx&contractaddress=0x73DF02B5a8AB94932343d7259d5002b329050659"
+        // "https://api-testnet.bscscan.com/api?module=account&action=tokennfttx&contractaddress=0x73DF02B5a8AB94932343d7259d5002b329050659"
+        `https://api-testnet.bscscan.com/api?module=account&action=tokennfttx&contractaddress=${this.state.contractaddress}`
       )
       .then((response) => {
         const getDataAll = response.data.result.map((cow, key) => {
@@ -148,6 +153,7 @@ class ShowItemCowCert extends Component {
       showTasks: [],
       loading: false,
       winOwner: "",
+      contractaddress:""
     };
     this.ShowView = this.ShowView.bind(this);
   }
@@ -174,12 +180,13 @@ class ShowItemCowCert extends Component {
                 const beforAr = show.cowCertlist;
                 const afterSp = beforAr.split(",");
                 // console.log(afterSp,show.imgPath)
-                if (show && afterSp[13] == "0") {
+                if (show && afterSp[13] === "0") {
                   return (
                     <form
                       class="col-md-9 m-auto"
                       method="post"
                       // role="form"
+                      key={setkey}
                     >
                       <div class="row">
                         <div class="mb-3 name-app">
@@ -372,7 +379,7 @@ class ShowItemCowCert extends Component {
                       </div>
                     </form>
                   );
-                } else if (show && afterSp[13] == "1") {
+                } else if (show && afterSp[13] === "1") {
                   return (
                     <>
                       <form
@@ -489,7 +496,7 @@ class ShowItemCowCert extends Component {
                           </thead>
                           <tbody>
                             {this.state.hash.map((hashshowcert) => {
-                              if (show.id == hashshowcert.token) {
+                              if (show.id === hashshowcert.token) {
                                 return (
                                   <tr key={hashshowcert.to}>
                                     <td>{hashshowcert.to}</td>

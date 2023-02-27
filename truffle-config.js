@@ -7,6 +7,12 @@ const providerTestnet = new HDWalletProvider({
   privateKeys: ['4054150a976e78366bfd190da4b4592dc4a5a6d94d0ef9d059c2517d05bbe365'],
   providerOrUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545/'
 });
+const providerTestnetMumbi = new HDWalletProvider({
+  privateKeys: [
+    "4054150a976e78366bfd190da4b4592dc4a5a6d94d0ef9d059c2517d05bbe365",
+  ],
+  providerOrUrl: "https://rpc-mumbai.maticvigil.com",
+});
 
 module.exports = {
   networks: {
@@ -22,6 +28,12 @@ module.exports = {
       provider: () => providerTestnet,
       network_id: "97",
       // gas: 1000000,
+      skipDryRun: true,
+    },
+    kmutnbTes: {
+      provider: () => providerTestnetMumbi,
+      network_id: "80001",
+      port: 80001,
       skipDryRun: true,
     },
   },
